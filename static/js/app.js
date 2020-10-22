@@ -29,8 +29,10 @@ var datab=d3.json('/../samples.json').then(data => {
       var otus=otu_ids.map(val=>'OTU '+val);
       Plotly.restyle('bar','x',[top_vals.reverse()]);
       Plotly.restyle('bar', 'y',[otus.reverse()]);
-      Plotly.relayout('bar',{title:`${pat_id}`});
-
+      Plotly.relayout('bar',{title:`Patient ${pat_id}`});
+      Plotly.restyle('bubble','x',[otu_ids])
+      Plotly.restyle('bubble','y',[top_vals])
+      Plotly.relayout('bubble',{title: `Patient ${pat_id}`})
 
     }
     selection.on('change',changer);
@@ -64,9 +66,20 @@ var datab=d3.json('/../samples.json').then(data => {
         type: "bar",
         orientation: "h"
       };
-      var layout={title: pat_id};
+      var trace2={
+        x:otu_ids,
+        y:top_vals,
+        mode:'markers',
+        marker:{size:top_vals,color:otu_ids}
+      }
+      var to_plot2=[trace2];
+      var layout2={
+        title:`Patient ${pat_id}`
+      }
+      var layout={title:`Patient ${pat_id}`};
       var to_plot=[trace1];
       Plotly.newPlot('bar',to_plot,layout);
+      Plotly.newPlot('bubble',to_plot2,layout2);
     }
     init();
 })
