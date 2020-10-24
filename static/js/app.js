@@ -1,5 +1,6 @@
 var datab=d3.json('/../samples.json').then(data => {
     var selection=d3.select('#selDataset');
+    // the data binding we just learned seemed to be a viable way to add all the patient options
     var options=selection.selectAll('option');
     options.data(data.names)
       .enter()
@@ -7,7 +8,11 @@ var datab=d3.json('/../samples.json').then(data => {
       .text(function(d){
       return `${d}`
       })
+
+      // Initializing pat_id variable for filtering the data
     var pat_id='default';
+
+    // Plot restyling function based on pat_id selected
     function changer(){
       pat_id=selection.node().value;
       console.log('success');
@@ -17,16 +22,19 @@ var datab=d3.json('/../samples.json').then(data => {
       var dem=data.metadata.filter(filtering);
       var dem_dom=d3.select('#sample-metadata');
       var list=dem_dom.selectAll('li');
+      // Again, data binding to easily show all the demographic data of the patient
       list.data(Object.entries(dem[0]))
         .text(function (d){
           return d;
         })
+        // filtering data based on pat_id
       var filtered=data.samples.filter(filtering);
       console.log(filtered);
       var tops=data.samples.map(sample=> sample.sample_values[0]);
       var top_vals=filtered['0'].sample_values.slice(0,10);
       var otu_ids=filtered['0'].otu_ids.slice(0,10);
       var otus=otu_ids.map(val=>'OTU '+val);
+      // restyling plots after grabbing all the data
       Plotly.restyle('bar','x',[top_vals.reverse()]);
       Plotly.restyle('bar', 'y',[otus.reverse()]);
       Plotly.relayout('bar',{title:`Patient ${pat_id}`});
@@ -35,9 +43,11 @@ var datab=d3.json('/../samples.json').then(data => {
       Plotly.relayout('bubble',{title: `Patient ${pat_id}`})
 
     }
+    // event handling
     selection.on('change',changer);
     console.log(pat_id);
 
+    // Initial plots function
     function init(){
       pat_id='940';
       function filtering(samples){
